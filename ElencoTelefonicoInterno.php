@@ -2,7 +2,7 @@
 <html>
 <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="styles.css" />
-<script src="jquery-1.11.1.js" type="text/javascript"></script>
+<script src="jQuery-3.3.1/jquery-3.3.1.min.js" type="text/javascript"></script>
 <script src="script.js" type="text/javascript"></script>
 <title>ATER di Udine - Elenco Telefonico Interno</title>
 
