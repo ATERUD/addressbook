@@ -23,7 +23,7 @@ function ater_get_ldap_connection()
 function ater_get_ldap_users($bind, $filter, $fields)
 {
         $basedn = getenv("HTTP_ATERUD_LDAP_BASEDN");
-		$sr = ldap_search($bind, $basedn, $filter, $fields);
+	$sr = ldap_search($bind, $basedn, $filter, $fields);
         $info = ldap_get_entries($bind, $sr);
 
 	// Converti le stringhe in UTF8
