@@ -24,7 +24,9 @@ function emit_table_header()
 	echo "<tr>";
 	echo "<th>Cognome</th><th>Nome</th><th class=\"phone\">Int.</th>";
 	echo "<th class=\"phone\">Est.</th><th class=\"mobile\">Cell.</th>";
-	echo "<th class=\"mail\">E-mail</th><th class=\"department\">Ufficio</th><th class=\"location\">Sede</th>";
+	echo "<th class=\"mail\">E-mail</th>";
+	echo "<th class=\"initials\">Iniziali</th>";
+	echo "<th class=\"department\">Ufficio</th><th class=\"location\">Sede</th>";
 	echo "</tr>";
 	echo "</thead>";
 	echo "\n";
@@ -36,7 +38,7 @@ function emit_table_close()
 	echo "\n";
 }
 
-function emit_table_row($name, $cognome, $phoneInt, $phoneExt, $mobile, $mail, $pager, $department, $location)
+function emit_table_row($name, $cognome, $initials, $phoneInt, $phoneExt, $mobile, $mail, $pager, $department, $location)
 {
 	echo "<tr>";
 	echo "<td class=\"cognome\">$cognome</td>";
@@ -45,6 +47,7 @@ function emit_table_row($name, $cognome, $phoneInt, $phoneExt, $mobile, $mail, $
 	echo "<td class=\"phone\">$phoneExt</td>";
 	echo "<td class=\"mobile\">$mobile</td>";
 	echo "<td class=\"mail\">$mail</td>";
+	echo "<td class=\"initials\">$initials</td>";
 	echo "<td class=\"department\">$department</td>";
 	echo "<td class=\"location\">$location</td>";
 	echo "</tr>";
@@ -66,7 +69,7 @@ if ($ldapConnection) {
 	// leggi gli utenti
 
 	// (userAccountControl:1.2.840.113556.1.4.803:=2 sono gli utenti disabilitati
-	$fields = array("cn", "givenName", "sn", "mail", "telephoneNumber", "pager",
+	$fields = array("cn", "givenName", "sn", "initials", "mail", "telephoneNumber", "pager",
                  "facsimileTelephoneNumber", "mobile", "department", "physicalDeliveryOfficeName");
 	$info = ater_get_ldap_users($ldapConnection,
 		"(&(|(objectClass=user)(objectClass=contact))(telephoneNumber=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))", $fields);
@@ -76,8 +79,15 @@ if ($ldapConnection) {
 	
 	$numEntries = $info["count"]; 
 	$entriesPerColumn = ceil($numEntries / 3) ;
-	echo "<table id=\"dir\" class=\"display compact\">";
 	
+	echo "<div>Mostra/Nascondi: <a class=\"toggle-vis\" data-column=\"0\">Cognome</a> - ";
+	echo "<a class=\"toggle-vis\" data-column=\"1\">Nome</a> - <a class=\"toggle-vis\" data-column=\"2\">Int.</a> - <a class=\"toggle-vis\" data-column=\"3\">Est.</a>";
+	echo " - <a class=\"toggle-vis\" data-column=\"4\">Cell.</a> - <a class=\"toggle-vis\" data-column=\"5\">E-Mail</a> - <a class=\"toggle-vis\" data-column=\"6\">Ufficio</a>";
+	echo " - <a class=\"toggle-vis\" data-column=\"7\">Sede</a>";
+	echo "</div>";
+
+	echo "<table id=\"dir\" class=\"display compact\">";
+
 	emit_table_header();
 	echo "<tbody>";
 	for ($i = 0; $i < $numEntries; $i++) {
@@ -85,6 +95,7 @@ if ($ldapConnection) {
 		if ($phone != "") {
 			$givenName=$info[$i]["givenname"][0];
 			$sName=$info[$i]["sn"][0];
+			$initials = $info[$i]["initials"][0];
 			$phoneNumber = ater_format_telephone_number($info[$i]["telephonenumber"][0]);
 			$mobile="";
 			$department="";
@@ -102,8 +113,8 @@ if ($ldapConnection) {
 			$physicalDeliveryOfficeName = "Udine";
 			if (!empty($info[$i]["physicaldeliveryofficename"][0]))
 				$physicalDeliveryOfficeName = $info[$i]["physicaldeliveryofficename"][0];
-			
-    		emit_table_row($givenName, $sName, $internalNumber, $phoneNumber, $mobile, $mail, $internalNumber, $department, $physicalDeliveryOfficeName);
+
+			emit_table_row($givenName, $sName, $initials, $internalNumber, $phoneNumber, $mobile, $mail, $internalNumber, $department, $physicalDeliveryOfficeName);
 		}
 	}
 	echo "</tbody>";
