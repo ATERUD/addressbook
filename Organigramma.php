@@ -7,8 +7,8 @@ require_once(__DIR__.'/ater-phplibs/ater_ldap.php');
 $ldapConnection = ater_get_ldap_connection();
 if ($ldapConnection) {
 	$fields = array("cn", "givenName", "sn", "department", "manager", "title");
-    // (userAccountControl:1.2.840.113556.1.4.803:=2 sono gli utenti disabilitati
-    $disabledUsersFilter = "(&(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))"; 
+	// (userAccountControl:1.2.840.113556.1.4.803:=2 sono gli utenti disabilitati
+	$disabledUsersFilter = "(&(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))"; 
 	$info = ater_get_ldap_users($ldapConnection, $disabledUsersFilter, $fields);
 		
 	ldap_unbind($ldapConnection);
@@ -23,7 +23,7 @@ if ($ldapConnection) {
 	}
 
 	$sortKey = 'manager';
-    ater_sort_ldap_array($info, $sortKey);
+	ater_sort_ldap_array($info, $sortKey);
 }
 
 ?>
