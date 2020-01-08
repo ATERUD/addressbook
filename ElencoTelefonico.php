@@ -79,14 +79,15 @@ if ($ldapConnection) {
 	
 	$numEntries = $info["count"]; 
 	$entriesPerColumn = ceil($numEntries / 3) ;
-	
+
+	/*	
 	echo "<div>Mostra/Nascondi: <a class=\"toggle-vis\" data-column=\"0\">Cognome</a> - ";
 	echo "<a class=\"toggle-vis\" data-column=\"1\">Nome</a> - <a class=\"toggle-vis\" data-column=\"2\">Int.</a> - <a class=\"toggle-vis\" data-column=\"3\">Est.</a>";
 	echo " - <a class=\"toggle-vis\" data-column=\"4\">Cell.</a> - <a class=\"toggle-vis\" data-column=\"5\">E-Mail</a> - <a class=\"toggle-vis\" data-column=\"6\">Ufficio</a>";
 	echo " - <a class=\"toggle-vis\" data-column=\"7\">Sede</a>";
 	echo "</div>";
-
-	echo "<table id=\"dir\" class=\"display compact\">";
+	*/
+	echo "<table id=\"dir\" class=\"display compact\">";	
 
 	emit_table_header();
 	echo "<tbody>";
@@ -95,7 +96,7 @@ if ($ldapConnection) {
 		if ($phone != "") {
 			$givenName=$info[$i]["givenname"][0];
 			$sName=$info[$i]["sn"][0];
-			$initials = $info[$i]["initials"][0];
+ 			$initials = $info[$i]["initials"][0];
 			$phoneNumber = ater_format_telephone_number($info[$i]["telephonenumber"][0]);
 			$mobile="";
 			$department="";
@@ -113,8 +114,8 @@ if ($ldapConnection) {
 			$physicalDeliveryOfficeName = "Udine";
 			if (!empty($info[$i]["physicaldeliveryofficename"][0]))
 				$physicalDeliveryOfficeName = $info[$i]["physicaldeliveryofficename"][0];
-
-			emit_table_row($givenName, $sName, $initials, $internalNumber, $phoneNumber, $mobile, $mail, $internalNumber, $department, $physicalDeliveryOfficeName);
+			
+    		emit_table_row($givenName, $sName, $initials, $internalNumber, $phoneNumber, $mobile, $mail, $internalNumber, $department, $physicalDeliveryOfficeName);
 		}
 	}
 	echo "</tbody>";
