@@ -14,7 +14,7 @@ function ater_get_internal_number(number) {
 	
 function ater_number_is_mobile(number) {
         var result = false;
-        if (number.length == 10 && number[0] != '0')
+        if (number.length >= 9 && number[0] == '3')
                 result = true;
 
         return result;
@@ -22,7 +22,7 @@ function ater_number_is_mobile(number) {
 
 function ater_number_is_green(number) {
         var result = false;
-        if (number.length == 9 && number.substring(0, 3) == '800')
+        if (number.length >= 6 && number.substring(0, 2) == '80')
                 result = true;
         return result;
 }
