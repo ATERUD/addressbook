@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
     var table = $('#dir').DataTable({
         paging: false,
         dom: 'Bfrtip',
@@ -25,7 +25,7 @@ $(document).ready(function() {
         ],
     });
 
-	var ADEntries = gADEntries;
+    var ADEntries = gADEntries;
     for (i = 0; i < window.gADEntryCount; i++) {
         try {
             var cn = ADEntries[i]['cn'][0];
