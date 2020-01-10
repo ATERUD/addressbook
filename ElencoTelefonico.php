@@ -1,68 +1,9 @@
 <!DOCTYPE html>
-<html>
-<meta charset="utf-8"/>
-
-<link rel="stylesheet" type="text/css" href="datatables.min.css"/>
-
-<script type="text/javascript" src="datatables.min.js"></script>
-
-<script type="text/javascript" charset="utf8" src="/script_table.js"></script>
-
-<title>ATER di Udine - Elenco Telefonico Interno</title>
-
-<body lang=IT>
 
 <?php
 
 require_once(__DIR__.'/ater-phplibs/ater_ldap.php');
 require_once(__DIR__.'/ater-phplibs/ater_utils.php');
-
-
-function emit_table_header()
-{
-	echo "<thead>";
-	echo "<tr>";
-	echo "<th>Cognome</th><th>Nome</th><th class=\"phone\">Int.</th>";
-	echo "<th class=\"phone\">Est.</th><th class=\"mobile\">Cell.</th>";
-	echo "<th class=\"mail\">E-mail</th>";
-	echo "<th class=\"initials\">Iniziali</th>";
-	echo "<th class=\"department\">Ufficio</th><th class=\"location\">Sede</th>";
-	echo "</tr>";
-	echo "</thead>";
-	echo "\n";
-}
-
-function emit_table_close()
-{
-	echo "</table>";
-	echo "\n";
-}
-
-function emit_table_row($name, $cognome, $initials, $phoneInt, $phoneExt, $mobile, $mail, $pager, $department, $location)
-{
-	echo "<tr>";
-	echo "<td class=\"cognome\">$cognome</td>";
-	echo "<td>$name</td>";
-	echo "<td class=\"phone\">$phoneInt</td>";
-	echo "<td class=\"phone\">$phoneExt</td>";
-	echo "<td class=\"mobile\">$mobile</td>";
-	echo "<td class=\"mail\">$mail</td>";
-	echo "<td class=\"initials\">$initials</td>";
-	echo "<td class=\"department\">$department</td>";
-	echo "<td class=\"location\">$location</td>";
-	echo "</tr>";
-	echo "\n";
-}
-
-
-function add_mailto($string)
-{
-	$result = "";
-	if ($string)
-		$result="<a href='mailto:{$string}'>$string</a>";
-	return $result;
-}
-
 
 $ldapConnection = ater_get_ldap_connection();
 if ($ldapConnection) {
@@ -79,51 +20,111 @@ if ($ldapConnection) {
 	
 	$numEntries = $info["count"]; 
 	$entriesPerColumn = ceil($numEntries / 3) ;
-
-	/*	
-	echo "<div>Mostra/Nascondi: <a class=\"toggle-vis\" data-column=\"0\">Cognome</a> - ";
-	echo "<a class=\"toggle-vis\" data-column=\"1\">Nome</a> - <a class=\"toggle-vis\" data-column=\"2\">Int.</a> - <a class=\"toggle-vis\" data-column=\"3\">Est.</a>";
-	echo " - <a class=\"toggle-vis\" data-column=\"4\">Cell.</a> - <a class=\"toggle-vis\" data-column=\"5\">E-Mail</a> - <a class=\"toggle-vis\" data-column=\"6\">Ufficio</a>";
-	echo " - <a class=\"toggle-vis\" data-column=\"7\">Sede</a>";
-	echo "</div>";
-	*/
-	echo "<table id=\"dir\" class=\"display compact\">";	
-
-	emit_table_header();
-	echo "<tbody>";
-	for ($i = 0; $i < $numEntries; $i++) {
-		$phone = $info[$i]["telephonenumber"][0];
-		if ($phone != "") {
-			$givenName=$info[$i]["givenname"][0];
-			$sName=$info[$i]["sn"][0];
- 			$initials = $info[$i]["initials"][0];
-			$phoneNumber = ater_format_telephone_number($info[$i]["telephonenumber"][0]);
-			$mobile="";
-			$department="";
-			$internalNumber='';
-			if (!empty($info[$i]["department"])) {
-				$department=$info[$i]["department"][0];
-				$internalNumber=ater_get_internal_number($info[$i]["telephonenumber"][0]);
-			}
-			if (!empty($info[$i]["mobile"]))
-				$mobile=ater_format_telephone_number($info[$i]["mobile"][0]);
-			if (!empty($info[$i]["mail"]))
-				$mail=add_mailto($info[$i]["mail"][0]);
-			else
-				$mail="";
-			$physicalDeliveryOfficeName = "Udine";
-			if (!empty($info[$i]["physicaldeliveryofficename"][0]))
-				$physicalDeliveryOfficeName = $info[$i]["physicaldeliveryofficename"][0];
-			
-    		emit_table_row($givenName, $sName, $initials, $internalNumber, $phoneNumber, $mobile, $mail, $internalNumber, $department, $physicalDeliveryOfficeName);
-		}
-	}
-	echo "</tbody>";
-	emit_table_close();
 }
-
 ?>
 
+<html>
+<meta charset="utf-8"/> 
+<head>
+<link rel="stylesheet" type="text/css" href="datatables.min.css"/>
 
+<script type="text/javascript" src="datatables.min.js"></script>
+<script type="text/javascript" src="ater-jslibs/ater-format.js"></script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		var ADEntries = <?php echo json_encode($info); ?>;
+		var entryCount = "<?php echo $info["count"]; ?>";
+		var table = $('#dir').DataTable( {
+			paging: false,
+                dom: 'Bfrtip',
+                stateSave: true,
+                buttons: [
+                        {
+                                extend: 'print',
+                                text: '<em>S</em>tampa',
+                                exportOptions: {
+                    columns: ':visible'
+                },
+                                customize: function ( win ) {
+                        $(win.document.body)
+                        .css( 'font-size', '10pt' );
+                $(win.document.body).find( 'table' )
+                        .addClass( 'compact' )
+                        .css( 'font-size', '8px' );
+                }
+                        },
+                        {
+                                extend: 'colvis',
+                                text: '<em>C</em>olonne',
+                        }
+                ],
+    	} );
+
+		for (i = 0; i < entryCount; i++) {
+			try {
+				var cn = ADEntries[i]['cn'][0];
+				var givenName = ADEntries[i]['givenname'][0];
+				var sn = ADEntries[i]['sn'][0];
+				var manager = '';
+				try {
+					manager = ADEntries[i]['manager'][0];
+				} catch (error) {
+    	        }
+				var jobTitle = '';
+				try {
+					jobTitle = ADEntries[i]['title'][0];
+				} catch (error) {
+				}
+				var initials = ADEntries[i]['initials'][0];
+				var phoneNumber = ater_format_telephone_number(ADEntries[i]['telephonenumber'][0]);
+                var internalNumber = ater_get_internal_number(phoneNumber);
+                var department = '';
+				try {
+					department = ADEntries[i]['department'][0];
+				} catch (error) {
+				}
+				//if (!empty($info[$i]["department"])) {
+                //	$department=$info[$i]["department"][0];
+                //	$internalNumber=ater_get_internal_number($info[$i]["telephonenumber"][0]);
+                //}
+                var mobile = '';
+				try {
+					mobile = ater_format_telephone_number(ADEntries[i]['mobile'][0]);
+				} catch (error) {
+				}
+                var mail = ADEntries[i]['mail'][0];
+				if (mail) {
+					mail = add_mailto(mail);	
+				}
+                var physicalDeliveryOfficeName = '';
+				try {
+					physicalDeliveryOfficeName = ADEntries[i]['physicaldeliveryofficename'][0];
+				} catch (Error) {	
+					physicalDeliveryOfficeName = 'Udine';
+				}
+				table.row.add([givenName, sn, internalNumber, phoneNumber, mobile, mail, initials, department, physicalDeliveryOfficeName ]).draw(false);
+			} catch (error) {
+				
+			}
+		}
+	});
+</script>
+<title>ATER di Udine - Elenco Telefonico Interno</title>
+</head>
+
+<body lang=IT>
+	<div id="table_div">
+	<table id="dir">
+	<thead>
+		<tr>
+			<th>Cognome</th><th>Nome</th><th class=\"phone\">Int.</th>
+			<th class=\"phone\">Est.</th><th class=\"mobile\">Cell.</th>
+			<th class=\"mail\">E-mail</th><th class=\"initials\">Iniziali</th>
+			<th class=\"department\">Ufficio</th><th class=\"location\">Sede</th>
+		</tr>
+	</thead>
+	</table>
+</div>
 </body>
 </html>
