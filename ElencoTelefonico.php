@@ -28,9 +28,14 @@ if ($ldapConnection) {
 <head>
 <link rel="stylesheet" type="text/css" href="datatables.min.css"/>
 
+<script type="text/javascript">
+	var gADEntries = <?php global $info; echo json_encode($info); ?>;
+	var gADEntryCount = '<?php global $info; echo $info["count"]; ?>';
+</script>
 <script type="text/javascript" src="datatables.min.js"></script>
 <script type="text/javascript" src="ater-jslibs/ater-format.js"></script>
 <script type="text/javascript" src="onload.js"></script>
+
 
 <title>ATER di Udine - Elenco Telefonico Interno</title>
 </head>

@@ -1,6 +1,4 @@
-$(document).ready(function () {
-    var ADEntries = <? php echo json_encode($info); ?>;
-    var entryCount = "<?php echo $info["count"]; ?>";
+$(document).ready(function() {
     var table = $('#dir').DataTable({
         paging: false,
         dom: 'Bfrtip',
@@ -27,7 +25,8 @@ $(document).ready(function () {
         ],
     });
 
-    for (i = 0; i < entryCount; i++) {
+	var ADEntries = gADEntries;
+    for (i = 0; i < window.gADEntryCount; i++) {
         try {
             var cn = ADEntries[i]['cn'][0];
             var givenName = ADEntries[i]['givenname'][0];
