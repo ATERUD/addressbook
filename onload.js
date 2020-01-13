@@ -51,8 +51,13 @@ $(document).ready(function() {
 				ADEntries[i]['initials'][0];
 			} catch (error) {
 			}
-            var phoneNumber = ater_format_telephone_number(ADEntries[i]['telephonenumber'][0]);
-            var internalNumber = ater_get_internal_number(phoneNumber);
+            var phoneNumber = '';
+			var internalNumber = '';
+			try {
+				phoneNumber = ater_format_telephone_number(ADEntries[i]['telephonenumber'][0]);
+				internalNumber = ater_get_internal_number(phoneNumber);
+			} catch (error) {
+			}
             var department = '';
             try {
                 department = ADEntries[i]['department'][0];
@@ -63,10 +68,12 @@ $(document).ready(function() {
                 mobile = ater_format_telephone_number(ADEntries[i]['mobile'][0]);
             } catch (error) {
             }
-            var mail = ADEntries[i]['mail'][0];
-            if (mail) {
+            var mail = '';
+			try {
+				mail = ADEntries[i]['mail'][0];
                 mail = add_mailto(mail);
-            }
+            } catch (error) {
+			}
             var physicalDeliveryOfficeName = '';
             try {
                 physicalDeliveryOfficeName = ADEntries[i]['physicaldeliveryofficename'][0];
