@@ -6,6 +6,10 @@ $(document).ready(function() {
 		"autoWidth": false,
         buttons: [
             {
+                extend: 'colvis',
+                text: '<em>C</em>olonne',
+            },
+            {
                 extend: 'print',
                 text: '<em>S</em>tampa',
                 exportOptions: {
@@ -19,10 +23,10 @@ $(document).ready(function() {
                         .css('font-size', '8px');
                 }
             },
-            {
-                extend: 'colvis',
-                text: '<em>C</em>olonne',
-            }
+			{
+				extend: 'excel',
+				text: 'Excel'
+			}
         ],
     });
 
