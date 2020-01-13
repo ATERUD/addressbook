@@ -46,7 +46,11 @@ $(document).ready(function() {
                 jobTitle = ADEntries[i]['title'][0];
             } catch (error) {
             }
-            var initials = ADEntries[i]['initials'][0];
+            var initials = '';
+			try {
+				ADEntries[i]['initials'][0];
+			} catch (error) {
+			}
             var phoneNumber = ater_format_telephone_number(ADEntries[i]['telephonenumber'][0]);
             var internalNumber = ater_get_internal_number(phoneNumber);
             var department = '';
