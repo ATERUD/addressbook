@@ -48,7 +48,7 @@ $(document).ready(function() {
             }
             var initials = '';
 			try {
-				ADEntries[i]['initials'][0];
+				initials = ADEntries[i]['initials'][0];
 			} catch (error) {
 			}
             var phoneNumber = '';
