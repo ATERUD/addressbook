@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="custom_fonts.css" />
 <link rel="stylesheet" type="text/css" href="styles.css" />
+
 <script src="jQuery-3.3.1/jquery-3.3.1.min.js" type="text/javascript"></script>
 <script src="script.js" type="text/javascript"></script>
 <title>ATER di Udine - Elenco Telefonico Interno</title>
@@ -163,15 +165,13 @@ if ($ldapConnection) {
 
 	echo "<table class=\"directory\">";
 	echo "<tr>";
-    echo "<th>Nome</th><th class=\"phone\">Numero</th>";//<th class=\"phone\">Fax</th>";
+    echo "<th>Nome</th><th class=\"phone\">Numero</th>";
     echo "</tr>";
 	for ($i = 0; $i < $info["count"]; $i++) {
 		if (!empty($info[$i]["sn"]))
 			$sName=$info[$i]["sn"][0];
 		if (!empty($info[$i]["telephonenumber"]))
 			$telephoneNumber=ater_format_telephone_number($info[$i]["telephonenumber"][0]);
-		#if (!empty($info[$i]["facsimileTelephoneNumber"]))
-		#	$fax=$info[$i]["facsimileTelephoneNumber"][0];
 		if (!empty($info[$i]["pager"]))
 			$pager=$info[$i]["pager"][0];
 		else

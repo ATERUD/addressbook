@@ -1,11 +1,13 @@
 html {
 }
 
+body {
+  font-family: 'IBM Plex Sans';
+}
 
 .directory {
 	border-style: none;
 	border-collapse: collapse;
-	font-family: sans-serif;
 	font-size:15px;
 }
 

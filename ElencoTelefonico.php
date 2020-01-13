@@ -22,7 +22,8 @@ if ($ldapConnection) {
 <meta charset="utf-8"/> 
 <head>
 <link rel="stylesheet" type="text/css" href="datatables.min.css"/>
-<link rel="stylesheet" type="text/css" href="customstyles.css"/>
+<link rel="stylesheet" type="text/css" href="custom_fonts.css"/>
+<link rel="stylesheet" type="text/css" href="custom_styles.css"/>
 
 <script type="text/javascript">
 	var gADEntries = <?php global $info; echo json_encode($info); ?>;
