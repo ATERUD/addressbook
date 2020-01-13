@@ -37,8 +37,8 @@ if ($ldapConnection) {
 </head>
 
 <body lang=IT>
-	<div id="table_div">
-	<table id="dir">
+	<div id="container">
+	<table id="dir" class="display" style="width:100%">
 	<thead>
 		<tr>
 			<th>Cognome</th>

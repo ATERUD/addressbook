@@ -1,8 +1,9 @@
-$(document).ready(function () {
+$(document).ready(function() {
     var table = $('#dir').DataTable({
         paging: false,
         dom: 'Bfrtip',
         stateSave: true,
+		"autoWidth": false,
         buttons: [
             {
                 extend: 'print',
@@ -25,7 +26,7 @@ $(document).ready(function () {
         ],
     });
 
-    var ADEntries = gADEntries;
+	var ADEntries = gADEntries;
     for (i = 0; i < window.gADEntryCount; i++) {
         try {
             var cn = ADEntries[i]['cn'][0];
@@ -49,10 +50,6 @@ $(document).ready(function () {
                 department = ADEntries[i]['department'][0];
             } catch (error) {
             }
-            //if (!empty($info[$i]["department"])) {
-            //	$department=$info[$i]["department"][0];
-            //	$internalNumber=ater_get_internal_number($info[$i]["telephonenumber"][0]);
-            //}
             var mobile = '';
             try {
                 mobile = ater_format_telephone_number(ADEntries[i]['mobile'][0]);
