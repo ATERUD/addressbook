@@ -55,17 +55,15 @@ class HTMLTable {
 }
 
 
-function print_div()
-{
-	echo "<div class=\"column\">";
-	echo "\n";
-}
-
-
-function print_div_close()
-{
-	echo "</div>";
-	echo "\n";
+class HTMLDivElement {
+	public function __construct() {
+		echo "<div class=\"column\">";
+		echo "\n";
+	}
+	public function __destruct() {
+		echo "</div>";
+		echo "\n";
+	}
 }
 
 
@@ -112,7 +110,7 @@ if ($ldap) {
 		else
 			print_table_header_location("Tolmezzo");
 	
-		print_div();
+		$div = new HTMLDivElement();
 			
 		$table = new HTMLTable();
 		for ($i = 0; $i < $numEntries; $i++) {
@@ -146,14 +144,14 @@ if ($ldap) {
 		
 				if ($i != 0 && (($i + 1) % $entriesPerColumn == 0) && ($i < $numEntries - 1)) {
 					$table = null;
-					print_div_close();
-					print_div();
+					$div = null;
+					$div = new HTMLDivElement();
 					$table = new HTMLTable();
 				}
 			}
 		}
 		$table = null;
-		print_div_close();
+		$div = null;
 	}	
 
 	// Recupera i "contatti" da LDAP
@@ -161,7 +159,7 @@ if ($ldap) {
 	$ldap = null;
 	
 	print_table_header_location("Altri");
- 	print_div();
+	$div = new HTMLDivElement();
 
 	$table = new HTMLTable();
 	for ($i = 0; $i < $info["count"]; $i++) {
@@ -182,7 +180,7 @@ if ($ldap) {
 		$table->AddRow($sName, ' ', $phone, '', '', '', '');
 	}
 	$table = null;
-	print_div_close();
+	$div = null;
 	
 	#echo "<div id=\"header\">ATER di Udine - Elenco Telefonico Interno</div>\n";	
 	#echo "<div id=\"footer\">$numEntries voci, $entriesPerColumn per colonna</div>\n";
