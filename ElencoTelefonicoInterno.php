@@ -144,7 +144,7 @@ if ($ldap) {
 		if ($user->pager != '')
 			$phone=$user->pager;
 		else
-			$phone=$user->phone;
+			$phone=ater_format_telephone_number($user->phone);
 
 		$table->AddRow($user->surname, ' ', $phone, '', '', '', '');
 	}
