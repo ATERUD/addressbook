@@ -49,13 +49,14 @@ class LDAP {
 	        // metti le intestazioni di colonna in un array, per usarle nella
 		// chiamata array_multisort
 		foreach ($list as $key => $row) {
-			//if ($row != '') {
-			$name[$key] = $row[$sortKey];
-			//}
+			if (is_array($row) && array_key_exists($sortKey, $row))
+				$name[$key] = $row[$sortKey];
+			else
+				$name[$key] = '';
 	        }
 	        if (!array_multisort($name, SORT_REGULAR, $list)) {
 	                echo "Cannot sort array!";
-	        };
+	        }
 	}
 }
 
