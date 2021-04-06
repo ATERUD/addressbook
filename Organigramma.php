@@ -11,13 +11,16 @@ if ($ldap) {
 	$disabledUsersFilter = "(&(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))"; 
 	$info = $ldap->GetUsers($disabledUsersFilter, $fields, 'manager') ;
 		
-	for ($i = 0; $i < $info["count"]; $i++) {
-		$manager = $info[$i]["manager"][0]; 
-		$commaPos = strpos($manager, ',');
-		// Manager è nel formato LDAP (CN=nome, OU=ou, etc). Prendiamo solo Cognome e Nome.
-		if ($commaPos != false) {
-			$info[$i]['manager'][0] = substr($manager, 3, $commaPos - 3);
-		}
+	for ($i = 0; $i < count($info); $i++) {
+		if (!empty($info[$i]["manager"][0])) {
+			$manager = $info[$i]["manager"][0];
+			$commaPos = strpos($manager, ',');
+			// Manager è nel formato LDAP (CN=nome, OU=ou, etc). Prendiamo solo Cognome e Nome.
+			if ($commaPos != false) {
+				$info[$i]['manager'][0] = substr($manager, 3, $commaPos - 3);
+			}
+		} else
+			$manager = "";
 	}
 
 	$ldap = null;
