@@ -27,32 +27,33 @@ function print_table_header_location($location)
 }
 
 
-function print_table_header()
-{
-	echo "<tr>";
-	echo "<th>Nome</th><th class=\"initials\">Sigla</th><th class=\"phone\">Int.</th><th class=\"mobile\">Cell.</th><th class=\"mail\">E-mail</th><th class=\"department\">Ufficio</th>";
-	echo "</tr>";
-	echo "\n";
+class HTMLTable {
+	public function __construct() {
+		echo "<table class=\"directory\">";
+		echo "<tr>";
+		echo "<th>Nome</th><th class=\"initials\">Sigla</th><th class=\"phone\">Int.</th><th class=\"mobile\">Cell.</th><th class=\"mail\">E-mail</th><th class=\"department\">Ufficio</th>";
+		echo "</tr>";
+		echo "\n";
+	}
+
+	public function __destruct() {
+		echo "</table>";
+		echo "\n";
+	}
+
+	public function AddRow($name, $initials, $phone, $mobile, $mail, $pager, $department) {
+		echo "<tr>";
+		echo "<td class=\"name\">$name</td>";
+		echo "<td class=\"initials\">$initials</td>";
+		echo "<td class=\"phone\">$phone</td>";
+		echo "<td class=\"mobile\">$mobile</td>";
+		echo "<td class=\"mail\">$mail</td>";
+		echo "<td class=\"department\">$department</td>";
+		echo "</tr>";
+		echo "\n";
+	}
 }
 
-function print_table_close()
-{
-	echo "</table>";
-	echo "\n";
-}
-
-function print_table_row($name, $initials, $phone, $mobile, $mail, $pager, $department)
-{
-	echo "<tr>";
-	echo "<td class=\"name\">$name</td>";
-	echo "<td class=\"initials\">$initials</td>";
-	echo "<td class=\"phone\">$phone</td>";
-	echo "<td class=\"mobile\">$mobile</td>";
-	echo "<td class=\"mail\">$mail</td>";
-	echo "<td class=\"department\">$department</td>";
-	echo "</tr>";
-	echo "\n";
-}
 
 function print_div()
 {
@@ -112,26 +113,25 @@ if ($ldap) {
 			print_table_header_location("Tolmezzo");
 	
 		print_div();
-	
-		echo "<table class=\"directory\">";
-	
-		print_table_header();
+			
+		$table = new HTMLTable();
 		for ($i = 0; $i < $numEntries; $i++) {
 			$phone = $info[$i]["telephonenumber"][0];
 			if ($phone != "") {
 				$givenName=$info[$i]["givenname"][0];
 				$sName=$info[$i]["sn"][0];
-				$initials=$info[$i]["initials"][0];
+				$initials = "";
+				if (!empty($info[$i]["initials"][0]))
+					$initials=$info[$i]["initials"][0];
 				$phoneNumber=$info[$i]["telephonenumber"][0];
 				$mobile="";
 				$department="";
 				if (!empty($info[$i]["mobile"]))
 					$mobile=$info[$i]["mobile"][0];
 				$mobile=ater_format_telephone_number($mobile);
-				if ($info[$i]["othertelephone"]["count"] > 0)
+				$otherTelephone="";
+				if (!empty($info[$i]["othertelephone"]))
 					$otherTelephone=$info[$i]["othertelephone"][0];
-				else
-					$otherTelephone="";
 				$internalNumber=ater_get_internal_number($phoneNumber);
 				if ($otherTelephone != "")
 					$internalNumber = $internalNumber . "/" . ater_get_internal_number($otherTelephone);
@@ -142,18 +142,17 @@ if ($ldap) {
 				if (!empty($info[$i]["department"])) {
 					$department=$info[$i]["department"][0];
 				}
-				print_table_row($sName . ' ' . $givenName, $initials, $internalNumber, $mobile, $mail, $internalNumber, $department);
+				$table->AddRow($sName . ' ' . $givenName, $initials, $internalNumber, $mobile, $mail, $internalNumber, $department);
 		
 				if ($i != 0 && (($i + 1) % $entriesPerColumn == 0) && ($i < $numEntries - 1)) {
-					print_table_close();
+					$table = null;
 					print_div_close();
 					print_div();
-					echo "<table class=\"directory\">";
-					print_table_header();
+					$table = new HTMLTable();
 				}
 			}
 		}
-		print_table_close();
+		$table = null;
 		print_div_close();
 	}	
 
@@ -164,10 +163,7 @@ if ($ldap) {
 	print_table_header_location("Altri");
  	print_div();
 
-	echo "<table class=\"directory\">";
-	echo "<tr>";
-    echo "<th>Nome</th><th class=\"phone\">Numero</th>";
-    echo "</tr>";
+	$table = new HTMLTable();
 	for ($i = 0; $i < $info["count"]; $i++) {
 		if (!empty($info[$i]["sn"]))
 			$sName=$info[$i]["sn"][0];
@@ -177,18 +173,15 @@ if ($ldap) {
 			$pager=$info[$i]["pager"][0];
 		else
 			$pager=NULL;
- 		echo "<tr>";
- 		echo "<td class=\"name\">$sName</td>";
- 		echo "<td class=\"phone\">";
+		$phone = '';
 		if ($pager)
-			echo $pager;
+			$phone=$pager;
 		else
-			echo $telephoneNumber;
-		echo "</td>";
- 		echo "</tr>";
-		echo "\n";
+			$phone=$telephoneNumber;
+
+		$table->AddRow($sName, ' ', $phone, '', '', '', '');
 	}
-	print_table_close();	
+	$table = null;
 	print_div_close();
 	
 	#echo "<div id=\"header\">ATER di Udine - Elenco Telefonico Interno</div>\n";	
