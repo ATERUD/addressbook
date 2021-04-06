@@ -84,8 +84,8 @@ echo "<label><input type=\"checkbox\" id=\"show_department\" unchecked>Ufficio</
 echo "</div>";
 
 
-$ldapConnection = ater_get_ldap_connection();
-if ($ldapConnection) {
+$ldap = new \ATERUD\LDAP();
+if ($ldap) {
 	// Recupera gli utenti da LDAP
 	
 	$fields = array("cn", "givenName", "sn", "initials", "mail", "telephoneNumber", "pager",
@@ -102,9 +102,8 @@ if ($ldapConnection) {
 		else
 			$filter = "(&(objectClass=user)(telephoneNumber=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(physicalDeliveryOfficeName=Tolmezzo))";
 	
-		$info = ater_get_ldap_users($ldapConnection, $filter, $fields);
+		$info = $ldap->GetUsers($filter, $fields, 'sn');
 
-		ater_sort_ldap_array($info, 'sn');
 		$numEntries = $info["count"]; 
 		$entriesPerColumn = ceil($numEntries / 3) ;
 		if ($iterazione == 0)
@@ -159,12 +158,9 @@ if ($ldapConnection) {
 	}	
 
 	// Recupera i "contatti" da LDAP
-	$info = ater_get_ldap_users($ldapConnection, "(&(objectClass=contact)(telephoneNumber=*))", $fields);
-
-	ldap_unbind($ldapConnection);	
-			
-	ater_sort_ldap_array($info, 'cn');
-
+	$info = $ldap->GetUsers("(&(objectClass=contact)(telephoneNumber=*))", $fields, 'cn');
+	$ldap = null;
+	
 	print_table_header_location("Altri");
  	print_div();
 

@@ -5,16 +5,16 @@
 require_once(__DIR__.'/ater-phplibs/ater_ldap.php');
 require_once(__DIR__.'/ater-phplibs/ater_utils.php');
 
-$ldapConnection = ater_get_ldap_connection();
-if ($ldapConnection) {
+$ldap = new ATERUD\LDAP();
+if ($ldap) {
 	// Recupera gli utenti da LDAP
 	// (userAccountControl:1.2.840.113556.1.4.803:=2 sono gli utenti disabilitati
 	$fields = array("cn", "givenName", "sn", "initials", "mail", "telephoneNumber", "pager",
                  "facsimileTelephoneNumber", "mobile", "department", "physicalDeliveryOfficeName");
-	$info = ater_get_ldap_users($ldapConnection,
+	$info = $ldap->GetUsers(
 		"(&(|(objectClass=user)(objectClass=contact))(telephoneNumber=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2)))", $fields);
 	
-	ldap_unbind($ldapConnection);
+	$ldap = null;
 }
 ?>
 
