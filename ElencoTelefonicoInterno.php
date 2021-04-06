@@ -129,8 +129,8 @@ if ($ldapConnection) {
 				if (!empty($info[$i]["mobile"]))
 					$mobile=$info[$i]["mobile"][0];
 				$mobile=ater_format_telephone_number($mobile);
-				if ($info[$i]["othertelephone"]["count"] > 1)
-					$otherTelephone=$info[$i]["othertelephone"][1];
+				if ($info[$i]["othertelephone"]["count"] > 0)
+					$otherTelephone=$info[$i]["othertelephone"][0];
 				else
 					$otherTelephone="";
 				$internalNumber=ater_get_internal_number($phoneNumber);
