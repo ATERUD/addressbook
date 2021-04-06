@@ -89,7 +89,7 @@ if ($ldapConnection) {
 	// Recupera gli utenti da LDAP
 	
 	$fields = array("cn", "givenName", "sn", "initials", "mail", "telephoneNumber", "pager",
-                 "facsimileTelephoneNumber", "mobile", "department");
+                 "facsimileTelephoneNumber", "mobile", "department", "otherTelephone");
 	// (userAccountControl:1.2.840.113556.1.4.803:=2 sono gli utenti disabilitati
 	
 
@@ -129,12 +129,17 @@ if ($ldapConnection) {
 				if (!empty($info[$i]["mobile"]))
 					$mobile=$info[$i]["mobile"][0];
 				$mobile=ater_format_telephone_number($mobile);
+				if ($info[$i]["othertelephone"]["count"] > 1)
+					$otherTelephone=$info[$i]["othertelephone"][1];
+				else
+					$otherTelephone="";
 				$internalNumber=ater_get_internal_number($phoneNumber);
+				if ($otherTelephone != "")
+					$internalNumber = $internalNumber . "/" . ater_get_internal_number($otherTelephone);
 				if (!empty($info[$i]["mail"]))
 					$mail=add_mailto($info[$i]["mail"][0]);
 				else
 					$mail="";
-				
 				if (!empty($info[$i]["department"])) {
 					$department=$info[$i]["department"][0];
 				}
