@@ -101,9 +101,9 @@ if ($ldap) {
 		else
 			$filter = "(&(objectClass=user)(telephoneNumber=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(physicalDeliveryOfficeName=Tolmezzo))";
 	
-		$info = $ldap->GetUsers($filter, $fields, 'sn');
+		$info = $ldap->GetUsersExt($filter, $fields, 'sn');
 
-		$numEntries = $info["count"]; 
+		$numEntries = count($info); 
 		$entriesPerColumn = ceil($numEntries / 3) ;
 		if ($iterazione == 0)
 			print_table_header_location("Udine");
@@ -114,70 +114,39 @@ if ($ldap) {
 			
 		$table = new HTMLTable();
 		for ($i = 0; $i < $numEntries; $i++) {
-			$phone = $info[$i]["telephonenumber"][0];
-			if ($phone != "") {
-				$givenName=$info[$i]["givenname"][0];
-				$sName=$info[$i]["sn"][0];
-				$initials = "";
-				if (!empty($info[$i]["initials"][0]))
-					$initials=$info[$i]["initials"][0];
-				$phoneNumber=$info[$i]["telephonenumber"][0];
-				$mobile="";
-				$department="";
-				if (!empty($info[$i]["mobile"]))
-					$mobile=$info[$i]["mobile"][0];
-				$mobile=ater_format_telephone_number($mobile);
-				$otherTelephone="";
-				if (!empty($info[$i]["othertelephone"]))
-					$otherTelephone=$info[$i]["othertelephone"][0];
-				$internalNumber=ater_get_internal_number($phoneNumber);
-				if ($otherTelephone != "")
-					$internalNumber = $internalNumber . "/" . ater_get_internal_number($otherTelephone);
-				if (!empty($info[$i]["mail"]))
-					$mail=add_mailto($info[$i]["mail"][0]);
-				else
-					$mail="";
-				if (!empty($info[$i]["department"])) {
-					$department=$info[$i]["department"][0];
-				}
-				$table->AddRow($sName . ' ' . $givenName, $initials, $internalNumber, $mobile, $mail, $internalNumber, $department);
+			$user = $info[$i];
+			$table->AddRow($user->surname . ' ' . $user->givenname, $user->initials,
+				$user->internalnumber, $user->mobile, $user->mail, $user->internalnumber, $user->department);
 		
-				if ($i != 0 && (($i + 1) % $entriesPerColumn == 0) && ($i < $numEntries - 1)) {
-					$table = null;
-					$div = null;
-					$div = new HTMLDivElement();
-					$table = new HTMLTable();
-				}
+			if ($i != 0 && (($i + 1) % $entriesPerColumn == 0) && ($i < $numEntries - 1)) {
+				$table = null;
+				$div = null;
+				$div = new HTMLDivElement();
+				$table = new HTMLTable();
 			}
 		}
 		$table = null;
 		$div = null;
 	}	
+	$info = null;
 
 	// Recupera i "contatti" da LDAP
-	$info = $ldap->GetUsers("(&(objectClass=contact)(telephoneNumber=*))", $fields, 'cn');
+	$info = $ldap->GetUsersExt("(&(objectClass=contact)(telephoneNumber=*))", $fields, 'cn');
 	$ldap = null;
 	
 	print_table_header_location("Altri");
 	$div = new HTMLDivElement();
 
 	$table = new HTMLTable();
-	for ($i = 0; $i < $info["count"]; $i++) {
-		if (!empty($info[$i]["sn"]))
-			$sName=$info[$i]["sn"][0];
-		if (!empty($info[$i]["telephonenumber"]))
-			$telephoneNumber=ater_format_telephone_number($info[$i]["telephonenumber"][0]);
-		if (!empty($info[$i]["pager"]))
-			$pager=$info[$i]["pager"][0];
-		else
-			$pager=NULL;
+	for ($i = 0; $i < count($info); $i++) {
+		$user = $info[$i];
 		$phone = '';
-		if ($pager)
-			$phone=$pager;
+		if ($user->pager != '')
+			$phone=$user->pager;
 		else
-			$phone=$telephoneNumber;
+			$phone=$user->phone;
 
-		$table->AddRow($sName, ' ', $phone, '', '', '', '');
+		$table->AddRow($user->surname, ' ', $phone, '', '', '', '');
 	}
 	$table = null;
 	$div = null;

@@ -2,8 +2,28 @@
 
 namespace ATERUD;
 
-class LDAP {
+class User {
+	public $phone;
+	public $givenname;
+	public $surname;
+	public $initials;
+	public $mobile;
+	public $department;
+	public $otherphone;
+	public $mail;
+	public $internalnumber;
+	public $pager;
+	public function __construct() {
 	
+	}
+
+	public function InternalNumber() {
+	
+	}
+}
+
+
+class LDAP {
 	private $connection;
 
 	// Apre un bind ldap.
@@ -44,6 +64,39 @@ class LDAP {
 	        return $info;
 	}
 
+	public function GetUsersExt($filter, $fields, $sortKey = "") {
+		$rawList = $this->GetUsers($filter, $fields, $sortKey);
+		$usersList = Array();
+		for ($i = 0; $i < $rawList["count"]; $i++) {
+			if ($rawList[$i]["telephonenumber"][0] != "") {
+				$user = new User;
+				$user->phone=$rawList[$i]["telephonenumber"][0];
+				if (!empty($rawList[$i]["givenname"][0]))
+					$user->givenname=$rawList[$i]["givenname"][0];
+				if (!empty($rawList[$i]["sn"][0]))
+					$user->surname=$rawList[$i]["sn"][0];
+				if (!empty($rawList[$i]["pager"][0]))
+					$user->pager=$rawList[$i]["pager"][0];
+				if (!empty($rawList[$i]["initials"][0]))
+					$user->initials=$rawList[$i]["initials"][0];
+				if (!empty($rawList[$i]["mobile"]))
+					$user->mobile=$rawList[$i]["mobile"][0];
+				$user->mobile=ater_format_telephone_number($user->mobile);
+				if (!empty($rawList[$i]["othertelephone"]))
+					$user->otherphone=$rawList[$i]["othertelephone"][0];
+				$user->internalnumber=ater_get_internal_number($user->phone);
+				if ($user->otherphone != "")
+					$user->internalnumber = $user->internalnumber . "/" . ater_get_internal_number($user->otherphone);
+				if (!empty($rawList[$i]["mail"]))
+					$user->mail=add_mailto($rawList[$i]["mail"][0]);
+				if (!empty($rawList[$i]["department"])) {
+					$user->department=$rawList[$i]["department"][0];
+				}
+				array_push($usersList, $user);
+			}
+		}
+		return $usersList;
+	}
 
 	private function _SortArray(&$list, $sortKey) {
 	        // metti le intestazioni di colonna in un array, per usarle nella
