@@ -80,7 +80,7 @@ $(document).ready(function() {
             } catch (Error) {
                 physicalDeliveryOfficeName = 'Udine';
             }
-            table.row.add([givenName, sn, internalNumber, phoneNumber, mobile, mail, initials, department, physicalDeliveryOfficeName]).draw(false);
+            table.row.add([sn, givenName, internalNumber, phoneNumber, mobile, mail, initials, department, physicalDeliveryOfficeName]).draw(false);
         } catch (error) {
 
         }
