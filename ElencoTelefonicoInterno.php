@@ -91,15 +91,14 @@ if ($ldap) {
                  "facsimileTelephoneNumber", "mobile", "department", "otherTelephone");
 	// (userAccountControl:1.2.840.113556.1.4.803:=2 sono gli utenti disabilitati
 	
-
-	// Cambiarlo a 2 il 01/01/2020
 	$maxIterazioni = 2;
 
+	$baseFilter = "(&(|(telephoneNumber=*)(mobile=*))(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2))";
 	for ($iterazione = 0; $iterazione < $maxIterazioni; $iterazione++) {
 		if ($iterazione == 0)
-			$filter = "(&(objectClass=user)(telephoneNumber=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(!(physicalDeliveryOfficeName=Tolmezzo)))";
+			$filter = $baseFilter . "(!(physicalDeliveryOfficeName=Tolmezzo)))";
 		else
-			$filter = "(&(objectClass=user)(telephoneNumber=*)(!(userAccountControl:1.2.840.113556.1.4.803:=2))(physicalDeliveryOfficeName=Tolmezzo))";
+			$filter = $baseFilter . "(physicalDeliveryOfficeName=Tolmezzo))";
 	
 		$info = $ldap->GetUsersExt($filter, $fields, 'sn');
 
