@@ -95,19 +95,13 @@ if ($ldap) {
 
 	$baseFilter = "(&(|(telephoneNumber=*)(mobile=*))(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2))";
 	for ($iterazione = 0; $iterazione < $maxIterazioni; $iterazione++) {
-		if ($iterazione == 0)
-			$filter = $baseFilter . "(!(physicalDeliveryOfficeName=Tolmezzo)))";
-		else
-			$filter = $baseFilter . "(physicalDeliveryOfficeName=Tolmezzo))";
+		$filter = $baseFilter . ")";
 	
 		$info = $ldap->GetUsersExt($filter, $fields, 'sn');
 
 		$numEntries = count($info); 
 		$entriesPerColumn = ceil($numEntries / 3) ;
-		if ($iterazione == 0)
-			print_table_header_location("Udine");
-		else
-			print_table_header_location("Tolmezzo");
+		print_table_header_location("");
 	
 		$div = new HTMLDivElement();
 			
