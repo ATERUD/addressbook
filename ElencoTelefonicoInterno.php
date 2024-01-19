@@ -91,36 +91,32 @@ if ($ldap) {
                  "facsimileTelephoneNumber", "mobile", "department", "otherTelephone");
 	// (userAccountControl:1.2.840.113556.1.4.803:=2 sono gli utenti disabilitati
 	
-	$maxIterazioni = 2;
-
 	$baseFilter = "(&(|(telephoneNumber=*)(mobile=*))(objectClass=user)(!(userAccountControl:1.2.840.113556.1.4.803:=2))";
-	for ($iterazione = 0; $iterazione < $maxIterazioni; $iterazione++) {
-		$filter = $baseFilter . ")";
+	$filter = $baseFilter . ")";
 	
-		$info = $ldap->GetUsersExt($filter, $fields, 'sn');
+	$info = $ldap->GetUsersExt($filter, $fields, 'sn');
 
-		$numEntries = count($info); 
-		$entriesPerColumn = ceil($numEntries / 3) ;
-		print_table_header_location("");
+	$numEntries = count($info); 
+	$entriesPerColumn = ceil($numEntries / 3) ;
+	print_table_header_location("");
 	
-		$div = new HTMLDivElement();
+	$div = new HTMLDivElement();
 			
-		$table = new HTMLTable();
-		for ($i = 0; $i < $numEntries; $i++) {
-			$user = $info[$i];
-			$table->AddRow($user->surname . ' ' . $user->givenname, $user->initials,
-				$user->internalnumber, $user->mobile, $user->mail, $user->internalnumber, $user->department);
-		
-			if ($i != 0 && (($i + 1) % $entriesPerColumn == 0) && ($i < $numEntries - 1)) {
-				$table = null;
-				$div = null;
-				$div = new HTMLDivElement();
-				$table = new HTMLTable();
-			}
+	$table = new HTMLTable();
+	for ($i = 0; $i < $numEntries; $i++) {
+		$user = $info[$i];
+		$table->AddRow($user->surname . ' ' . $user->givenname, $user->initials,
+			$user->internalnumber, $user->mobile, $user->mail, $user->internalnumber, $user->department);
+	
+		if ($i != 0 && (($i + 1) % $entriesPerColumn == 0) && ($i < $numEntries - 1)) {
+			$table = null;
+			$div = null;
+			$div = new HTMLDivElement();
+			$table = new HTMLTable();
 		}
-		$table = null;
-		$div = null;
-	}	
+	}
+	$table = null;
+	$div = null;
 	$info = null;
 
 	// Recupera i "contatti" da LDAP
